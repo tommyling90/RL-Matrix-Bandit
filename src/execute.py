@@ -4,7 +4,7 @@ from agentSpace import AgentSpace
 from learningAlgo import LearningAlgo
 from agent import Agent
 from environment import Environnement
-from utils import normalizeMatrix
+from utils import normalizeMatrix, save_pickle
 
 class Execute:
     def __init__(self, n_instance, T, n_agents, const, title, n_actions):
@@ -15,41 +15,29 @@ class Execute:
         self.title = title
         self.n_actions = n_actions
 
-    def runOnePDExperiment(self, matrices, algo, noise_dist, noise_params):
+    def run_one_experiment(self, matrices, algo, noise_dist, noise_params, ctx, g, r):
         env = Environnement(matrices, noise_dist, noise_params)
         for agent in range(0, self.n_agents):
             a_space = AgentSpace(self.n_actions)
             learning_algo = LearningAlgo(self.const[agent], algo[agent], a_space, noise_params[1])
             env.ajouter_agents(Agent(a_space, learning_algo))
-        
-        plays = []
-        exploration_list = []
-        for time_step in range(0, self.T):
+
+        title = f"{'×'.join(algo)}_{'_'.join(str(n) for n in noise_params)}_{self.title}"
+
+        plays = np.zeros((self.n_agents, self.T))
+        exploration_list = plays.copy()
+        for i in range(ctx.iter_idx if ctx.run_idx == r else 0, self.T):
             actions, explorations = env.step()
-            plays.append(actions)
-            exploration_list.append(explorations)
+            plays[:, i] = actions
+            print(plays)
+            exploration_list[:, i] = explorations
+            regrets = [env.agents[k].regret for k in range(self.n_agents)]
+            rewards = [env.agents[k].reward for k in range(self.n_agents)]
 
-        actions_played, explorations_done = [], []
-        for j in range(0, self.n_agents):
-            actions_played.append([i[j] for i in plays])
-            explorations_done.append([i[j] for i in exploration_list])
-        regrets = [env.agents[k].regret for k in range(self.n_agents)]
-        rewards = [env.agents[k].reward for k in range(self.n_agents)]
+            save_pickle(ctx, self.n_instance, g, r, i, plays, exploration_list, regrets, rewards, title, self.n_actions)
 
-        return actions_played, regrets, rewards, explorations_done
-
-    def getPDResult(self, matrices, algo, noise_dist='normal', noise_params=(0, 0.05)):
+    def get_one_game_result(self, matrices, algo, ctx, g, noise_dist='normal', noise_params=(0, 0.05)):
         matrices_norm = [normalizeMatrix(mat,0) for mat in matrices]
-        all_rewards = []
-        all_regrets = []
-        all_plays = []
-        all_explorations = []
 
-        for realisation in range(0, self.n_instance):
-            plays, regrets, rewards, explorations = self.runOnePDExperiment(matrices_norm, algo, noise_dist, noise_params)
-            all_plays.append(np.array(plays))
-            all_rewards.append(np.array(rewards))
-            all_regrets.append(np.array(regrets))
-            all_explorations.append(np.array(explorations))
-
-        return np.array(all_plays), np.array(all_regrets), np.array(all_rewards), np.array(all_explorations)
+        for r in range(ctx.run_idx if ctx.game_idx == g else 0, self.n_instance):
+            self.run_one_experiment(matrices_norm, algo, noise_dist, noise_params, ctx, g, r)

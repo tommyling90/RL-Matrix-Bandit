@@ -1,0 +1,367 @@
+defaults:
+  horizon: 10
+  player: 3
+  runs: 5
+  save_folder: Figures/Test_Pickle1
+  seed: 43
+games:
+  game1:
+    algos:
+    - UCB
+    - UCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game10:
+    algos:
+    - UCB
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game11:
+    algos:
+    - UCB
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game12:
+    algos:
+    - UCB
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game13:
+    algos:
+    - TS
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game14:
+    algos:
+    - TS
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game15:
+    algos:
+    - TS
+    - TS
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game2:
+    algos:
+    - UCB
+    - UCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game3:
+    algos:
+    - UCB
+    - UCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game4:
+    algos:
+    - KLUCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game5:
+    algos:
+    - KLUCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game6:
+    algos:
+    - KLUCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game7:
+    algos:
+    - UCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game8:
+    algos:
+    - UCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43
+  game9:
+    algos:
+    - UCB
+    - KLUCB
+    - UCB
+    horizon: 10
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+    player: 3
+    runs: 5
+    save_folder: Figures/Test_Pickle1
+    seed: 43

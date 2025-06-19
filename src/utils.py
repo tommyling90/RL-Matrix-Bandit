@@ -1,4 +1,85 @@
 import numpy as np
+import pickle
+from collections import defaultdict
+
+def flatten_metrics(title, player, instance, n_actions, metrics_dict):
+    row = {
+        "title": title,
+        "player": player,
+        "instance": instance,
+        "n_actions": n_actions
+    }
+
+    for key, val in metrics_dict.items():
+        for t, value in enumerate(val):
+            row[f"{key}{t}"] = value
+    return row
+
+def merge_metrics(ctx_metrics):
+    merged = defaultdict(lambda: {
+        "title": None,
+        "player": None,
+        "instance": None,
+        "n_actions": None,
+        "metrics": defaultdict(list)
+    })
+
+    for row in ctx_metrics:
+        key = (row["title"], row["player"], row["instance"], row["n_actions"])
+        entry = merged[key]
+        entry["title"], entry["player"], entry["instance"], entry["n_actions"] = key
+
+        for k, v in row.items():
+            if k in {"title", "player", "instance", "n_actions"}:
+                continue
+            entry["metrics"][k].append(v)
+
+    # Now flatten the metrics dict into separate keys like play_time0, play_time1, ...
+    flat_rows = []
+    for entry in merged.values():
+        flat_row = {
+            "title": entry["title"],
+            "player": entry["player"],
+            "instance": entry["instance"],
+            "n_actions": entry["n_actions"]
+        }
+
+        for metric_name, values in entry["metrics"].items():
+            for i, v in enumerate(values):
+                flat_row[f"{metric_name}{i}"] = v
+
+        flat_rows.append(flat_row)
+
+    return flat_rows
+
+def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards, title, n_actions):
+    if (i + 1) % ctx.save_every == 0 or i == horizon - 1:
+        start = i - (i % ctx.save_every)
+        end = i + 1
+        for agent_id in range(plays.shape[0]):
+            ctx.metrics.append(flatten_metrics(
+                title=title,
+                player=f"agent_{agent_id}",
+                instance=f"instance_{r}",
+                n_actions=n_actions,
+                metrics_dict={
+                    "play_time": plays[agent_id, start:end].tolist(),
+                    # "reward_time": rewards[agent_id, i],
+                    # "regret_time": regrets[agent_id, i],
+                    "exploration_time": exploration_list[agent_id, start:end].tolist(),
+                }
+            ))
+
+        cp = {
+            "game_idx": g,
+            'run_idx': r,
+            'iter_idx': i + 1,
+            'metrics': ctx.metrics,
+        }
+        with open(ctx.cp_file, "wb") as f:
+            pickle.dump(cp, f)
+        print(f"📝 Saved checkpoint: game={g+1}, run={r}, iter={i + 1}")
+
 
 def generate_n_player_PD(n, reward_matrix):
     # 2 pcq trahir vs trahir pas
