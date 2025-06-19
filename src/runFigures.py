@@ -1,32 +1,11 @@
-import numpy as np
-from execute import Execute
+import yaml
+import json
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
-from tqdm import tqdm
 import matplotlib as mpl
 
-def run_one_game_experiments(game_name, matrices, noise_levels, algos, rounds=500, horizon=1000, n_agents=2):
-    results = {}
-    for noise in tqdm(noise_levels):
-        for algo_pair in algos:
-            title = f"{algo_pair[0]}×{algo_pair[1]}_{noise[1]}"
-            res = Execute(
-                rounds,
-                horizon,
-                n_agents,
-                [None] * n_agents,
-                game_name
-            ).getPDResult(
-                matrices,
-                algo_pair,
-                'normal',
-                noise
-            )
-            results[title] = res
-    return results
-
-
-def plot_results(game_name, results, noise_levels, algos, save_folder):
+def plot_3_results(game_name, results, noise_levels, algos, save_folder):
     mpl.rcParams["font.size"] = 5
     mpl.rcParams["axes.titlesize"] = 5
     mpl.rcParams["axes.labelsize"] = 5
@@ -45,16 +24,17 @@ def plot_results(game_name, results, noise_levels, algos, save_folder):
     all_y_values = []
     for ax, noise in zip(axes, noise_levels):
         for algo_paired in algos:
-            title = f"{algo_paired[0]}×{algo_paired[1]}_{noise[1]}"
-            mean = results[title]['metrics']['mean_cum_regret']['agent_0']
-            std = results[title]['metrics']['std_cum_regret']['agent_0']
+            title = f"{'×'.join(algo_paired)}_{'_'.join(str(n) for n in noise)}_{game_name}"
+            mean = np.array(results[title]['metrics']['mean_cum_regret']['agent_0'])
+            std = np.array(results[title]['metrics']['std_cum_regret']['agent_0'])
 
             n_rounds = len(mean)
             x = np.arange(n_rounds)
+            sep = r"$\times$"
             line = ax.plot(
                 x,
                 mean,
-                label=f"{algo_paired[0]}$\\times${algo_paired[1]}",
+                label=fr"{sep.join(algo_paired)}",
                 linewidth=1,
             )
             ax.plot(
@@ -369,32 +349,24 @@ def plot_results_action(game_name, results, noise_levels, algos, save_folder):
         filename = f"{save_folder}/proportions_{game_name}_noise{noise[1]:.2f}.pdf"
         fig.savefig(filename, dpi=300, bbox_inches="tight")
 
-if __name__ == "__main__":
-    np.random.seed(43)
+plt.rcParams.update({
+    "text.usetex": False,
+    "font.family": "serif",
+    "font.serif": ["Times New Roman"],
+    "figure.dpi": 300
+})
 
-    plt.rcParams.update({
-        "text.usetex": False,
-        "font.family": "serif",
-        "font.serif": ["Times New Roman"],
-        "figure.dpi": 300
-    })
-    sns.set_theme(style="whitegrid", palette="colorblind")
+#===execution of running figures below===#
+with open('../results.json', 'r') as f:
+    results = json.load(f)
 
-    games = {
-        "PG_wp": [np.array([[1, 0.2, 0], [0.2, 0.8, 0.2], [0, 0.2, 1]]),
-                  np.array([[1, 0.2, 0], [0.2, 0.8, 0.2], [0, 0.2, 1]])],
-        "PG": [np.array([[1, 0, 0], [0, 0.2, 0], [0, 0, 1]]),
-               np.array([[1, 0, 0], [0, 0.2, 0], [0, 0, 1]])],
-        "PD": [np.array([[0.6, 0], [1, 0.4]]),
-               np.array([[0.6, 0], [1, 0.4]]).T],
-        "SG": [np.array([[1, 0], [0, 0.5]]),
-               np.array([[1, 0], [0, 0.5]])],
-        "CG_no": [np.array([[1, 0, 0.75], [0, 0.9, 0.85], [0.75, 0.75, 0.85]]),
-                  np.array([[1, 0, 0.75], [0, 0.9, 0.85], [0.75, 0.75, 0.85]])]
-    }
+with open("../config.yaml", "r") as f:
+    config = yaml.safe_load(f)
 
-    noise_levels = [[0.0, 0.0], [0.0, 0.1], [0.0, 1.0]]
-    algo_pairs = [
+sns.set_theme(style="whitegrid", palette="colorblind")
+
+noise_levels_3 = [[0.0, 0.0], [0.0, 0.1], [0.0, 1.0]]
+algos_3 = [
         ["UCB", "UCB"],
         ["KLUCB", "KLUCB"],
         ["TS", "TS"],
@@ -402,33 +374,11 @@ if __name__ == "__main__":
         ["UCB", "TS"]
     ]
 
-    for game in tqdm(games.keys()):
-        results = run_one_game_experiments(game ,games[game], noise_levels, algo_pairs, rounds=500, horizon=1000, n_agents=2)
-        plot_results(game, results, noise_levels, algo_pairs, save_folder="Workshop/Figures")
-        plot_results_action(game, results, noise_levels, algo_pairs, save_folder="Workshop/Figures")
+games = []
+for exp in results.values():
+    if exp['experiment'] not in games:
+        games.append(exp['experiment'])
 
-    games_props = {
-        "PG_wp": [np.array([[1, 0.2, 0], [0.2, 0.8, 0.2], [0, 0.2, 1]]),
-                  np.array([[1, 0.2, 0], [0.2, 0.8, 0.2], [0, 0.2, 1]])],
-        "SG": [np.array([[1, 0], [0, 0.5]]),
-               np.array([[1, 0], [0, 0.5]])],
-    }
-
-    noise_levels_props = [[0.0, 0.0]]
-    algo_pairs_props = [
-        ["KLUCB", "KLUCB"],
-        ["UCB", "KLUCB"],
-    ]
-
-    for game in tqdm(games_props.keys()):
-        results = run_one_game_experiments(game, games_props[game], noise_levels_props, algo_pairs_props, rounds=500, horizon=1000,
-                                           n_agents=2)
-        plot_proportions(game, results, noise_levels_props, algo_pairs_props, save_folder="Workshop/FiguresCompare")
-
-    PD = [np.array([[0.6, 0], [1, 0.4]]),
-               np.array([[0.6, 0], [1, 0.4]]).T]
-    noise = [[0.0, 0.0], [0.0, 0.1]]
-    resultsPD = run_one_game_experiments("PD", PD, noise, [["KLUCB", "KLUCB"]], rounds=500,
-                                       horizon=1000,
-                                       n_agents=2)
-    plot_PDproportions('PD', resultsPD, noise, save_folder="Workshop/FiguresCompare")
+for game in games:
+    plot_3_results(game, results, noise_levels_3, algos_3, save_folder=f"../{config[next(iter(config))]['save_folder']}")
+# plot_results_action(game, results, noise_levels, algo_pairs, save_folder="Workshop/Figures")

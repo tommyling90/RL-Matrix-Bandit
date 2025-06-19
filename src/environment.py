@@ -18,20 +18,24 @@ class Environnement:
         else:
             raise ValueError(f"Unknown noise distribution: {self.noise_dist}")
 
-    def updateStep(self, a1, a2):
-        r1 = self.matrices[0][a1, a2] + self.sample_noise()
-        r2 = self.matrices[1][a1, a2] + self.sample_noise()
+    def updateStep(self, actions):
+        rewards = []
+        for i in range(len(self.agents)):
+            rewards.append(self.matrices[i][*actions] + self.sample_noise())
 
         min_matrix = np.minimum(self.matrices[0], self.matrices[1])
         max_val = np.max(min_matrix)
         regret_matrix = max_val - min_matrix
-        regret = regret_matrix[a1, a2]
+        regret = regret_matrix[*actions]
 
-        self.agents[0].update(a1, r1, regret)
-        self.agents[1].update(a2, r2, regret)
+        for i in range(len(self.agents)):
+            self.agents[i].update(actions[i], rewards[i], regret)
 
     def step(self):
-        action1, exploration1 = self.agents[0].train()
-        action2, exploration2 = self.agents[1].train()
-        self.updateStep(action1, action2)
-        return [action1, action2], [exploration1, exploration2]
+        acts, explorations = [], []
+        for i in range(len(self.agents)):
+            action, exp = self.agents[i].train()
+            acts.append(action)
+            explorations.append(exp)
+        self.updateStep(acts)
+        return acts, explorations
