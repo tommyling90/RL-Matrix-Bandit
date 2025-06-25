@@ -6,5 +6,11 @@ class PickleContext:
     run_idx: int
     iter_idx: int
     save_every: int
-    metrics: list
     cp_file: str
+
+    def reset_after_run(self):
+        self.iter_idx = 0
+
+    def reset_after_game(self):
+        self.run_idx = 0
+        self.iter_idx = 0

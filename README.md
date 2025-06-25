@@ -23,6 +23,12 @@ python src/runAll.py
 ```
 Note that with Apple M1 8-core 8Go-RAM it takes 25 minutes to run through the code and produce all the graphs used in the article.
 
+YAML CONFIG
+Yaml, pkls and output.csv all saved to the new folder.
+Aggregate metrics from pickles
+
+how pkls are saved
+
 ## Directory Structure
 
 ```bash

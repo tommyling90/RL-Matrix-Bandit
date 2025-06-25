@@ -1,6 +1,5 @@
 import yaml
-import os
-import pandas as pd
+import sys
 
 from execute import Execute
 from utils import *
@@ -19,13 +18,29 @@ player = defaults['player']
 folder = f"../{defaults['save_folder']}"
 
 if os.path.isdir(folder):
-    raise "Folder already exists. Name another folder so to not overwrite existing graphs."
+    choice = input("⚠️ Folder already exists.\n"
+           "If you're continuing an experiment that was interrupted, press Y to continue.\n"
+           "Otherwise press Q to quit and rename the folder in config.yaml.\n"
+           "[Y/Q]").strip().upper()
+    if choice == "Y":
+        print("✅ Continuing...")
+    elif choice == "Q":
+        print("❌ Exiting.")
+        sys.exit(0)
+    else:
+        print("❗ Invalid input. Exiting.")
+        sys.exit(1)
 else:
     os.makedirs(folder, exist_ok=True)
 
-checkpoint_file = f"{folder}/checkpoint.pkl"
-if os.path.exists(checkpoint_file):
-    with open(checkpoint_file, "rb") as f:
+with open(f"{folder}/config.yaml", 'w') as f:
+    yaml.dump(config, f)
+
+pkl_path = f"{folder}/pkl"
+
+latest_file = find_latest_checkpoint(pkl_path)
+if latest_file:
+    with open(latest_file, "rb") as f:
         cp = pickle.load(f)
     game_idx = cp['game_idx']
     run_idx = cp['run_idx']
@@ -33,10 +48,9 @@ if os.path.exists(checkpoint_file):
     metrics = cp['metrics']
 else:
     game_idx = run_idx = iter_idx = 0
-    metrics = []
 
-save_every = 5
-ctx = PickleContext(game_idx, run_idx, iter_idx, save_every, metrics, checkpoint_file)
+save_every = 25
+ctx = PickleContext(game_idx, run_idx, iter_idx, save_every, folder)
 
 for g in range(game_idx, len(games)):
     game = games[f'game{g+1}']
@@ -46,9 +60,6 @@ for g in range(game_idx, len(games)):
         player, n_actions, matrix)
     results = Execute(runs, horizon, player, [None] * player, game['name'], n_actions).get_one_game_result(
         matrices, game['algos'], ctx, g, 'normal', game['noise'][0])
+    ctx.reset_after_game()
 
-cleaned_metrics = merge_metrics(ctx.metrics)
-df = pd.DataFrame(cleaned_metrics)
-df.to_csv(f"{folder}/output.csv", index=False)
-with open(f"{folder}/config.yaml", 'w') as f:
-    yaml.dump(config, f)
+aggregate_metrics_from_pkl(f"{folder}/pkl")

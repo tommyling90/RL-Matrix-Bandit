@@ -1,8 +1,11 @@
 import numpy as np
 import pickle
+import os
+import re
+import pandas as pd
 from collections import defaultdict
 
-def flatten_metrics(title, player, instance, n_actions, metrics_dict):
+def flatten_metrics(title, player, instance, n_actions, start, metrics_dict):
     row = {
         "title": title,
         "player": player,
@@ -12,74 +15,114 @@ def flatten_metrics(title, player, instance, n_actions, metrics_dict):
 
     for key, val in metrics_dict.items():
         for t, value in enumerate(val):
-            row[f"{key}{t}"] = value
+            row[f"{key}{start+t}"] = value
     return row
 
-def merge_metrics(ctx_metrics):
-    merged = defaultdict(lambda: {
-        "title": None,
-        "player": None,
-        "instance": None,
-        "n_actions": None,
-        "metrics": defaultdict(list)
-    })
+def sort_metric_columns(df):
+    meta_cols = ["title", "player", "instance", "n_actions"]
 
-    for row in ctx_metrics:
-        key = (row["title"], row["player"], row["instance"], row["n_actions"])
-        entry = merged[key]
-        entry["title"], entry["player"], entry["instance"], entry["n_actions"] = key
+    metric_cols = [col for col in df.columns if col not in meta_cols]
 
-        for k, v in row.items():
-            if k in {"title", "player", "instance", "n_actions"}:
-                continue
-            entry["metrics"][k].append(v)
+    def sort_key(col):
+        match = re.match(r"([a-zA-Z_]+)(\d+)", col)
+        if match:
+            return (match.group(1), int(match.group(2)))
+        else:
+            return (col, -1)  # fallback
 
-    # Now flatten the metrics dict into separate keys like play_time0, play_time1, ...
-    flat_rows = []
-    for entry in merged.values():
-        flat_row = {
-            "title": entry["title"],
-            "player": entry["player"],
-            "instance": entry["instance"],
-            "n_actions": entry["n_actions"]
-        }
+    metric_cols_sorted = sorted(metric_cols, key=sort_key)
 
-        for metric_name, values in entry["metrics"].items():
-            for i, v in enumerate(values):
-                flat_row[f"{metric_name}{i}"] = v
+    return df[meta_cols + metric_cols_sorted]
 
-        flat_rows.append(flat_row)
+def find_latest_checkpoint(pkl_folder):
+    latest_cp = None
+    latest_key = (-1, -1, -1)  # (game, run, iter)
 
-    return flat_rows
+    pattern = re.compile(r"cp_game(\d+)_run(\d+)_iter(\d+)\.pkl")
+
+    if not os.path.exists(pkl_folder): return None
+    for fname in os.listdir(pkl_folder):
+        match = pattern.match(fname)
+        if match:
+            g, r, i = map(int, match.groups())
+            if (g, r, i) > latest_key:
+                latest_key = (g, r, i)
+                latest_cp = fname
+
+    if latest_cp:
+        print(f"✅ Latest checkpoint: {latest_cp}")
+        return os.path.join(pkl_folder, latest_cp)
+    else:
+        print("❌ No checkpoint found.")
+        return None
+
+def save_pickle_atomic(path, obj):
+    tmp_path = path + ".tmp"
+    with open(tmp_path, "wb") as f:
+        pickle.dump(obj, f)
+    os.replace(tmp_path, path)
 
 def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards, title, n_actions):
-    if (i + 1) % ctx.save_every == 0 or i == horizon - 1:
-        start = i - (i % ctx.save_every)
+    delta = []
+    if i + 1 >= ctx.save_every and ((i + 1) % ctx.save_every == 0 or i == horizon - 1):
+        start = i - (ctx.save_every - 1)
         end = i + 1
         for agent_id in range(plays.shape[0]):
-            ctx.metrics.append(flatten_metrics(
+            metrics_dict = {
+                "play_time": plays[agent_id, start:end].tolist(),
+                "reward_time": rewards[agent_id, start:end].tolist(),
+                "regret_time": regrets[agent_id, start:end].tolist(),
+                "exploration_time": exploration_list[agent_id, start:end].tolist(),
+            }
+
+            delta.append(flatten_metrics(
                 title=title,
                 player=f"agent_{agent_id}",
                 instance=f"instance_{r}",
                 n_actions=n_actions,
-                metrics_dict={
-                    "play_time": plays[agent_id, start:end].tolist(),
-                    # "reward_time": rewards[agent_id, i],
-                    # "regret_time": regrets[agent_id, i],
-                    "exploration_time": exploration_list[agent_id, start:end].tolist(),
-                }
+                start=start,
+                metrics_dict=metrics_dict
             ))
 
         cp = {
             "game_idx": g,
             'run_idx': r,
             'iter_idx': i + 1,
-            'metrics': ctx.metrics,
+            'metrics': delta,
         }
-        with open(ctx.cp_file, "wb") as f:
-            pickle.dump(cp, f)
+        pkl_file = f"{ctx.cp_file}/pkl/cp_game{g+1}_run{r}_iter{i+1}.pkl"
+        os.makedirs(os.path.dirname(pkl_file), exist_ok=True)
+        save_pickle_atomic(pkl_file, cp)
         print(f"📝 Saved checkpoint: game={g+1}, run={r}, iter={i + 1}")
 
+def aggregate_metrics_from_pkl(path):
+    merged_rows = defaultdict(dict)
+
+    for fname in sorted(os.listdir(path)):
+        if fname.endswith(".pkl") and fname.startswith("cp_"):
+            with open(os.path.join(path, fname), "rb") as f:
+                cp = pickle.load(f)
+
+                for entry in cp["metrics"]:
+                    key = (entry["title"], entry["player"], entry["instance"])
+
+                    if not merged_rows[key]:
+                        merged_rows[key]["title"] = entry["title"]
+                        merged_rows[key]["player"] = entry["player"]
+                        merged_rows[key]["instance"] = entry["instance"]
+                        merged_rows[key]["n_actions"] = entry["n_actions"]
+
+                    for k, v in entry.items():
+                        if k.startswith(("play_time", "reward_time", "regret_time", "exploration_time")):
+                            merged_rows[key][k] = v
+
+    all_rows = list(merged_rows.values())
+    df = pd.DataFrame(all_rows)
+    df = sort_metric_columns(df)
+
+    parent_folder = os.path.dirname(path.rstrip("/"))
+    df.to_csv(os.path.join(parent_folder, "output.csv"), index=False)
+    print(f"✅ Saved aggregated CSV.")
 
 def generate_n_player_PD(n, reward_matrix):
     # 2 pcq trahir vs trahir pas

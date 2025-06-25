@@ -29,15 +29,15 @@ class Execute:
         for i in range(ctx.iter_idx if ctx.run_idx == r else 0, self.T):
             actions, explorations = env.step()
             plays[:, i] = actions
-            print(plays)
             exploration_list[:, i] = explorations
-            regrets = [env.agents[k].regret for k in range(self.n_agents)]
-            rewards = [env.agents[k].reward for k in range(self.n_agents)]
+            regrets = np.array([env.agents[k].regret for k in range(self.n_agents)])
+            rewards = np.array([env.agents[k].reward for k in range(self.n_agents)])
 
             save_pickle(ctx, self.n_instance, g, r, i, plays, exploration_list, regrets, rewards, title, self.n_actions)
 
-    def get_one_game_result(self, matrices, algo, ctx, g, noise_dist='normal', noise_params=(0, 0.05)):
+    def get_one_game_result(self, matrices, algo, ctx, g, noise_dist, noise_params):
         matrices_norm = [normalizeMatrix(mat,0) for mat in matrices]
 
         for r in range(ctx.run_idx if ctx.game_idx == g else 0, self.n_instance):
             self.run_one_experiment(matrices_norm, algo, noise_dist, noise_params, ctx, g, r)
+            ctx.reset_after_run()

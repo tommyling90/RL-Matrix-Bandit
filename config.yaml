@@ -2,9 +2,9 @@
 defaults: &shared_defaults
   player: 3
   runs: 5
-  horizon: 10
+  horizon: 200
   seed: 43
-  save_folder: "Figures/Test_Pickle1"
+  save_folder: "Figures/Test_Pickle3"
 
 games:
   game1:
