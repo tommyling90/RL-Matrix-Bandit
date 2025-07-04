@@ -23,8 +23,8 @@ pip install -r ./requirements.txt
 
 ### 💡General Idea
 In this framework, the generation of results, statistics, and figures is separated and modularized.
-The user can run `runResults.py` to first generate results, then run `runStats.py` to generate the stats, and then run `runFigures.py` to generate figures.
-Notice that when executing `runResults.py`, the user can interrupt the experiment at any moment, and the results to date would be saved in `pkl` files.
+The program runs `runResults.py` to first generate results, then `runStats.py` to generate the stats, and then `runFigures.py` to generate figures.
+Notice that when executing the program, the user can interrupt the experiment at any moment, and the results to date would be saved in `pkl` files.
 When he resumes, the experiments will pick up where he left off. This is called *checkpointing*.
 
 The `pkl` files are saved to the directory `project_root/{folder}/pkl`.
@@ -67,6 +67,17 @@ Algorithms available are:
 - TS
 
 In `defaults`, the `player` parameter specifies the number of players in the game. Note that this number MUST match the length of the `algos` param in game.
+
+### ⚙️ Configuration of figures
+
+The user should also configure the file `graph_config.yaml` to specify what experiments to generate the figures for.
+Refer to the file to see what parameters are possible.
+Notice that
+1. the `name` must be exactly the same as listed above
+2. currently 2 possible choices for the `cumul_y` parameter - `regret` (cumulative regret graph) and `prop` (proportion of joint actions graph). These are the 2 graphs currently available.
+3. all values must be in string
+4. in `algos` parameter, the order matters! It must be the same order as in `algos` parameter in `config.yaml`
+5. for the `regret` graph, user can choose to either have different levels of noise for one certain algorithm combo in the graph, or have different algo combos on the same noise level in the graph. However, to keep the graph easy to read, it is NOT possible to have different algo combos across different noise levels in one graph. Likewise, for `prop` graph, to keep the graph clean, it is only possible to have one algo combo on one noise level.
 
 ### 📦 Checkpointing
 #### Save Strategy
