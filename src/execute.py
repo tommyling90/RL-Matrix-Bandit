@@ -15,12 +15,13 @@ class Execute:
         self.title = title
         self.n_actions = n_actions
 
-    def run_one_experiment(self, matrices, algo, noise_dist, noise_params, ctx, g, r):
-        env = Environnement(matrices, noise_dist, noise_params)
-        for agent in range(0, self.n_agents):
-            a_space = AgentSpace(self.n_actions)
-            learning_algo = LearningAlgo(self.const[agent], algo[agent], a_space, noise_params[1])
-            env.ajouter_agents(Agent(a_space, learning_algo))
+    def run_one_experiment(self, matrices, algo, noise_dist, noise_params, ctx, g, r, env):
+        if env is None:
+            env = Environnement(matrices, noise_dist, noise_params)
+            for agent in range(0, self.n_agents):
+                a_space = AgentSpace(self.n_actions)
+                learning_algo = LearningAlgo(self.const[agent], algo[agent], a_space, noise_params[1])
+                env.ajouter_agents(Agent(a_space, learning_algo))
 
         title = f"{'×'.join(algo)}_{'_'.join(str(n) for n in noise_params)}_{self.title}"
 
@@ -33,11 +34,12 @@ class Execute:
             regrets = np.array([env.agents[k].regret for k in range(self.n_agents)])
             rewards = np.array([env.agents[k].reward for k in range(self.n_agents)])
 
-            save_pickle(ctx, self.n_instance, g, r, i, plays, exploration_list, regrets, rewards, title, self.n_actions)
+            save_pickle(ctx, self.n_instance, g, r, i, plays, exploration_list, regrets, rewards, title, self.n_actions, env)
 
-    def get_one_game_result(self, matrices, algo, ctx, g, noise_dist, noise_params):
+    def get_one_game_result(self, matrices, algo, ctx, g, noise_dist, noise_params, env):
         matrices_norm = [normalizeMatrix(mat,0) for mat in matrices]
 
         for r in range(ctx.run_idx if ctx.game_idx == g else 0, self.n_instance):
-            self.run_one_experiment(matrices_norm, algo, noise_dist, noise_params, ctx, g, r)
+            self.run_one_experiment(matrices_norm, algo, noise_dist, noise_params, ctx, g, r, env)
             ctx.reset_after_run()
+            env = None

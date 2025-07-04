@@ -2,8 +2,9 @@
 
 ## Overview
 
-This project implements several reinforcement learning algorithms, matrix games, and environments where the games are carried out.
-Some important features include game configuration by user, extending the games to multiple players, checkpointing, and etc.
+This project is a modular training framework for reinforcement learning and implements several RL algorithms, matrix games, and the environment where the games are carried out.
+It demonstrates simulation-based methods and scalable code structure.
+Some important features include game configuration by user, extending the games to multiple players, checkpointing, figure configuration by user, and others.
 
 ## Installation
 
@@ -56,7 +57,7 @@ Notice the game names available are:
 - PG
 - PD
 - SG
-- CG
+- CG_no
 
 The `noise` parameter should always follow this pattern: `[0.0, {noise_level_tested}]`
 
