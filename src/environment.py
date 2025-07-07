@@ -1,5 +1,7 @@
 import numpy as np
 
+from agent import Agent
+
 class Environnement:
     def __init__(self, matrices, noise_dist, noise_params):
         self.agents = []
@@ -39,3 +41,24 @@ class Environnement:
             explorations.append(exp)
         self.updateStep(acts)
         return acts, explorations
+
+    def serialize(self):
+        return {
+            'matrices': self.matrices,
+            'noise_dist': self.noise_dist,
+            'noise_params': self.noise_params,
+            'agents': [agent.serialize() for agent in self.agents]
+        }
+
+    @staticmethod
+    def from_serialized(data):
+        env = Environnement(
+            data['matrices'],
+            data['noise_dist'],
+            data['noise_params']
+        )
+        env.agents = [
+            Agent.from_serialized(agent_data)
+            for i, agent_data in enumerate(data['agents'])
+        ]
+        return env

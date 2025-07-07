@@ -2,8 +2,9 @@
 
 ## Overview
 
-This project implements several reinforcement learning algorithms, matrix games, and environments where the games are carried out.
-Some important features include game configuration by user, extending the games to multiple players, checkpointing, and etc.
+This project is a modular training framework for reinforcement learning and implements several RL algorithms, matrix games, and the environment where the games are carried out.
+It demonstrates simulation-based methods and scalable code structure.
+Some important features include game configuration by user, extending the games to multiple players, checkpointing, figure configuration by user, and others.
 
 ## Installation
 
@@ -17,13 +18,21 @@ python3.10 -m venv PATH_TO_ENV/ENV_NAME
 source PATH_TO_ENV/ENV_NAME/bin/activate
 pip install -r ./requirements.txt
 ```
+## Use example
+
+1. Configure the files `config.yaml` and `graph_config.yaml` (see description below and the files for reference)
+2. Go to `main.py`. If user wishes to generate the results and the figures in one go, just run this file.
+3. Or else, comment out the code from where the program loads the `graph_config.yaml` file.
+4. User can interrupt the experiments at any moment. The results are saved in `pkl` files. When the user resumes, the experiment will pick up where it was left off.
+5. If user wishes to only generate figures, comment out the code above where the program loads the `graph_config.yaml` file.
+6. In `graph_config.yaml` user can choose a different folder than the folder in `config.yaml` to generate the figures from.
 
 ## Documentation
 
 ### 💡General Idea
 In this framework, the generation of results, statistics, and figures is separated and modularized.
-The user can run `runResults.py` to first generate results, then run `runStats.py` to generate the stats, and then run `runFigures.py` to generate figures.
-Notice that when executing `runResults.py`, the user can interrupt the experiment at any moment, and the results to date would be saved in `pkl` files.
+The program runs `runResults.py` to first generate results, then `runStats.py` to generate the stats, and then `runFigures.py` to generate figures.
+Notice that when executing the program, the user can interrupt the experiment at any moment, and the results to date would be saved in `pkl` files.
 When he resumes, the experiments will pick up where he left off. This is called *checkpointing*.
 
 The `pkl` files are saved to the directory `project_root/{folder}/pkl`.
@@ -51,12 +60,12 @@ Key parameters are loaded from a config.yaml file that the user needs to provide
 Refer to the existing `config.yaml` file to see what and how the parameters should be provided.
 It is STRONGLY recommended to follow the same structure.
 
-Notice the game names available are:
+The game names available are:
 - PG_WP
 - PG
 - PD
 - SG
-- CG
+- CG_no
 
 The `noise` parameter should always follow this pattern: `[0.0, {noise_level_tested}]`
 
@@ -66,6 +75,22 @@ Algorithms available are:
 - TS
 
 In `defaults`, the `player` parameter specifies the number of players in the game. Note that this number MUST match the length of the `algos` param in game.
+
+Notice the `save_every` parameter. Since pickle registers the data every `save_every` steps, if you're running a long experiment, is it HIGHLY recommended to enlarge the `save_every` number accordingly. Or else the program would slow down significantly or even crash due to the large amount of files saved when running.
+
+In `save_folder` parameter, the path entered should always be `Figures/YOUR_FOLDER_NAME` without any `../` preceding.
+
+### 📈 Configuration of figures
+
+The user should also configure the file `graph_config.yaml` to specify what games to generate the figures for and from what experiment folder.
+Refer to the file to see what parameters are possible.
+Notice that
+1. the `name` must be exactly the same as listed above
+2. currently 2 possible choices for the `cumul_y` parameter - `regret` (cumulative regret graph) and `prop` (proportion of joint actions graph). These are the 2 graphs currently available.
+3. all values must be in string
+4. in `algos` parameter, the order matters! It must be the same order as in `algos` parameter in `config.yaml`
+5. for the `regret` graph, user can choose to either have different levels of noise for one certain algorithm combo in the graph, or have different algo combos on the same noise level in the graph. However, to keep the graph easy to read, it is NOT possible to have different algo combos across different noise levels in one graph. Likewise, for `prop` graph, to keep the graph clean, it is only possible to have one algo combo on one noise level.
+6. In `save_folder` parameter, the path entered should always be `Figures/YOUR_FOLDER_NAME` without any `../` preceding.
 
 ### 📦 Checkpointing
 #### Save Strategy
@@ -90,8 +115,11 @@ However, if the user has interrupted the experiments and wish to aggregate the d
 ├── Figures/         
     ├── Test/           # Folder specified in yaml to accommodate the relevant data for that experiment
         ├── pkl/        # Folder that contains all pkl files
+        ├── prop/       # Generated joint action proportion graphs come here
+        ├── regret/     # Generated regret graphs come here
         ├── config.yaml # A copy of config.yaml as reference to the configurations experimented with
         ├── output.csv  # Results of the experiment
 ├── config.yaml         # Original config.yaml that the user should provide
+├── graph_config.yaml   # Original graph_config.yaml that the user should provide for graph generation
 ├── README.md           # This file
 ```

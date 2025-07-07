@@ -1,0 +1,58 @@
+defaults:
+  graph_folder: "Figures/Test_Pickle_interrupt_2Players"
+
+games:
+#  game1:
+#    name: "PG_WP"
+#    cumul_y: "regret"
+#    noise: ["1.0"]
+#    algos:
+#      - ["UCB", "TS", "UCB"]
+#      - ["TS", "TS", "UCB"]
+#      - ["UCB", "UCB", "UCB"]
+#  game2:
+#    name: "PG_WP"
+#    cumul_y: "regret"
+#    noise: ["0.0"]
+#    algos:
+#      - [ "KLUCB", "KLUCB", "UCB" ]
+#      - [ "UCB", "TS", "UCB" ]
+#  game3:
+#    name: "PG_WP"
+#    cumul_y: "regret"
+#    noise: ["0.0", "0.1", "1.0"]
+#    algos:
+#      - [ "UCB", "TS", "UCB" ]
+#  game4:
+#    name: "PG_WP"
+#    cumul_y: "regret"
+#    noise: ["0.1"]
+#    algos:
+#      - [ "UCB", "KLUCB", "UCB" ]
+#      - [ "TS", "TS", "UCB" ]
+  game1:
+    name: "PG_WP"
+    cumul_y: "regret"
+    noise: ["0.0", "0.1", "1.0"]
+    algos:
+      - ["UCB", "TS"]
+  game2:
+    name: "PG_WP"
+    cumul_y: "regret"
+    noise: ["1.0"]
+    algos:
+      - [ "TS", "TS" ]
+      - [ "KLUCB", "KLUCB" ]
+  game3:
+    name: "PG_WP"
+    cumul_y: "regret"
+    noise: ["0.1"]
+    algos:
+      - [ "UCB", "KLUCB" ]
+      - [ "UCB",  "TS" ]
+  game4:
+    name: "PG_WP"
+    cumul_y: "prop"
+    noise: ["0.1"]
+    algos:
+      - [ "UCB", "KLUCB" ]
