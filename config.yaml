@@ -1,14 +1,14 @@
 ---
-defaults: &shared_defaults
+defaults:
   player: 2
-  runs: 5
-  horizon: 200
+  runs: 500
+  horizon: 1000
   seed: 43
+  save_every: 1000
   save_folder: "Figures/Test_Pickle_interrupt_2Players"
 
 games:
 #  game1:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -18,7 +18,6 @@ games:
 #      - [0.0, 0.0]
 #    algos: ["UCB", "UCB", "UCB"]
 #  game2:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -28,7 +27,6 @@ games:
 #      - [0.0, 0.1]
 #    algos: ["UCB", "UCB", "UCB"]
 #  game3:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -38,7 +36,6 @@ games:
 #      - [0.0, 1.0]
 #    algos: ["UCB", "UCB", "UCB"]
 #  game4:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -48,7 +45,6 @@ games:
 #      - [0.0, 0.0]
 #    algos: ["KLUCB", "KLUCB", "UCB"]
 #  game5:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -58,7 +54,6 @@ games:
 #      - [0.0, 0.1]
 #    algos: ["KLUCB", "KLUCB", "UCB"]
 #  game6:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -68,7 +63,6 @@ games:
 #      - [0.0, 1.0]
 #    algos: ["KLUCB", "KLUCB", "UCB"]
 #  game7:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -78,7 +72,6 @@ games:
 #      - [0.0, 0.0]
 #    algos: ["UCB", "KLUCB", "UCB"]
 #  game8:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -88,7 +81,6 @@ games:
 #      - [0.0, 0.1]
 #    algos: [ "UCB", "KLUCB", "UCB"]
 #  game9:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -98,7 +90,6 @@ games:
 #      - [0.0, 1.0]
 #    algos: [ "UCB", "KLUCB", "UCB"]
 #  game10:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -108,7 +99,6 @@ games:
 #      - [0.0, 0.0]
 #    algos: [ "UCB", "TS", "UCB"]
 #  game11:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -118,7 +108,6 @@ games:
 #      - [0.0, 0.1]
 #    algos: [ "UCB", "TS", "UCB"]
 #  game12:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -128,7 +117,6 @@ games:
 #      - [0.0, 1.0]
 #    algos: [ "UCB", "TS", "UCB"]
 #  game13:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -138,7 +126,6 @@ games:
 #      - [0.0, 0.0]
 #    algos: [ "TS", "TS", "UCB"]
 #  game14:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -148,7 +135,6 @@ games:
 #      - [0.0, 0.1]
 #    algos: [ "TS", "TS", "UCB"]
 #  game15:
-#    <<: *shared_defaults
 #    name: "PG_WP"
 #    matrix:
 #      - [1, 0.2, 0]
@@ -158,7 +144,6 @@ games:
 #      - [0.0, 1.0]
 #    algos: [ "TS", "TS", "UCB"]
   game1:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -168,7 +153,6 @@ games:
       - [0.0, 0.0]
     algos: ["UCB", "UCB"]
   game2:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -178,7 +162,6 @@ games:
       - [0.0, 0.1]
     algos: ["UCB", "UCB"]
   game3:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -188,7 +171,6 @@ games:
       - [0.0, 1.0]
     algos: ["UCB", "UCB"]
   game4:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -198,7 +180,6 @@ games:
       - [0.0, 0.0]
     algos: ["KLUCB", "KLUCB"]
   game5:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -208,7 +189,6 @@ games:
       - [0.0, 0.1]
     algos: ["KLUCB", "KLUCB"]
   game6:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -218,7 +198,6 @@ games:
       - [0.0, 1.0]
     algos: ["KLUCB", "KLUCB"]
   game7:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -228,7 +207,6 @@ games:
       - [0.0, 0.0]
     algos: ["UCB", "KLUCB"]
   game8:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -238,7 +216,6 @@ games:
       - [0.0, 0.1]
     algos: [ "UCB", "KLUCB"]
   game9:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -248,7 +225,6 @@ games:
       - [0.0, 1.0]
     algos: [ "UCB", "KLUCB" ]
   game10:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -258,7 +234,6 @@ games:
       - [0.0, 0.0]
     algos: [ "UCB", "TS" ]
   game11:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -268,7 +243,6 @@ games:
       - [0.0, 0.1]
     algos: [ "UCB", "TS" ]
   game12:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -278,7 +252,6 @@ games:
       - [0.0, 1.0]
     algos: [ "UCB", "TS" ]
   game13:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -288,7 +261,6 @@ games:
       - [0.0, 0.0]
     algos: [ "TS", "TS" ]
   game14:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]
@@ -298,7 +270,6 @@ games:
       - [0.0, 0.1]
     algos: [ "TS", "TS" ]
   game15:
-    <<: *shared_defaults
     name: "PG_WP"
     matrix:
       - [1, 0.2, 0]

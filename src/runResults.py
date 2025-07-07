@@ -15,6 +15,7 @@ games = config['games']
 runs = defaults['runs']
 horizon = defaults['horizon']
 player = defaults['player']
+save_every = defaults['save_every']
 folder = f"../{defaults['save_folder']}"
 
 def run_results():
@@ -54,7 +55,6 @@ def run_results():
         game_idx = run_idx = iter_idx = 0
 
     np.random.set_state(rng_state) if rng_state is not None else np.random.seed(defaults['seed'])
-    save_every = 25
     ctx = PickleContext(game_idx, run_idx, iter_idx, save_every, folder)
 
     for g in range(game_idx, len(games)):

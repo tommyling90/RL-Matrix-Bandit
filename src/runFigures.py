@@ -6,7 +6,6 @@ import seaborn as sns
 
 from utils import parse_string
 from runStats import runStats
-from runResults import folder
 
 sns.set_theme(style="whitegrid", palette="colorblind")
 sns.despine(trim=True)
@@ -105,7 +104,7 @@ plt.rcParams.update({
     "legend.fontsize": 8
 })
 
-def generate_fig(cumul_y, algos, noise, name):
+def generate_fig(cumul_y, algos, noise, name, folder):
     games, games_result = [], []
     for algo in algos:
         for n in noise:
