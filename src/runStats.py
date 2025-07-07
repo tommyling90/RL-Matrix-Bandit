@@ -31,6 +31,7 @@ def runStats(file_path, game):
 
     stats = {
         'experiment': game,
+        'shape': [n_actions, n_agents],
         'metrics': {}
     }
 
@@ -50,17 +51,16 @@ def runStats(file_path, game):
     base = np.array([n_actions**p for p in reversed(range(n_agents))])
     actions = np.moveaxis(plays_arr, 1, -1)
     paire_action = np.tensordot(actions, base, axes=([2], [0])) + 1
+    paire_action = paire_action.astype(int)
+    ids = np.array([i for i in range(n_actions**n_agents)]) + 1
+    vecteur_de_props = np.zeros((paire_action.shape[1], ids.size), dtype=float)
 
-    ids = np.array([i for i in range(n_agents**n_actions)]) + 1
-    vecteur_de_compte = np.zeros((paire_action.shape[0], ids.size), dtype=int)
-    for j in range(paire_action.shape[0]):
-        for idx, t in enumerate(ids):
-            vecteur_de_compte[j, idx] = np.count_nonzero(paire_action[j] == t)
+    for j in range(n_ins):
+        for r in range(n_time):
+            id_val = paire_action[j, r]
+            vecteur_de_props[r, id_val - 1] += 1
 
-    vectuer_de_props = vecteur_de_compte / n_ins
-    v_d_p = {}
-    for a in range(n_agents):
-        v_d_p[f'agent_{a+1}'] = vectuer_de_props.tolist()
-    stats["metrics"]["vecteur_de_props"] = v_d_p
+    vecteur_de_props /= n_ins
+    stats["metrics"]["vecteur_de_props"] = vecteur_de_props
 
     return stats

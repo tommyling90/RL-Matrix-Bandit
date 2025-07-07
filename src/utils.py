@@ -62,7 +62,7 @@ def save_pickle_atomic(path, obj):
         pickle.dump(obj, f)
     os.replace(tmp_path, path)
 
-def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards, title, n_actions):
+def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards, title, n_actions, env):
     delta = []
     if i + 1 >= ctx.save_every and ((i + 1) % ctx.save_every == 0 or i == horizon - 1):
         start = i - (ctx.save_every - 1)
@@ -89,6 +89,8 @@ def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards
             'run_idx': r,
             'iter_idx': i + 1,
             'metrics': delta,
+            'rng_state': np.random.get_state(),
+            'env_state': env.serialize()
         }
         pkl_file = f"{ctx.cp_file}/pkl/cp_game{g+1}_run{r}_iter{i+1}.pkl"
         os.makedirs(os.path.dirname(pkl_file), exist_ok=True)
@@ -114,7 +116,7 @@ def aggregate_metrics_from_pkl(path):
 
                     for k, v in entry.items():
                         if k.startswith(("play_time", "reward_time", "regret_time", "exploration_time")):
-                            merged_rows[key][k] = v
+                            merged_rows[key].setdefault(k, v)
 
     all_rows = list(merged_rows.values())
     df = pd.DataFrame(all_rows)
@@ -187,3 +189,10 @@ def normalizeMatrix(matrix, etendue):
     matrix_norm = (matrix-np.min(matrix))/np.ptp(matrix)
     matrix_norm_noise = matrix_norm*(1-etendue)+etendue/2
     return matrix_norm_noise
+
+def parse_string(s):
+    parts = s.split('_')
+    algos = parts[0]
+    noise = parts[2]
+    game = '_'.join(parts[3:])
+    return algos, noise, game

@@ -92,3 +92,24 @@ class LearningAlgo:
                 return self.getKLUCBAction(first_time, action)
             case _:
                 return None
+
+    def serialize(self):
+        return {
+            'constant': self.constant,
+            'algo_name': self.algo_name,
+            'a_space': self.a_space.serialize(),
+            'init_sequence': self.init_sequence.tolist(),
+            'noise_param': self.noise_param
+        }
+
+    @staticmethod
+    def from_serialized(data):
+        a_space = AgentSpace.from_serialized(data['a_space'])
+        algo = LearningAlgo(
+            data['constant'],
+            data['algo_name'],
+            a_space,
+            data['noise_param']
+        )
+        algo.init_sequence = np.array(data['init_sequence'])
+        return algo

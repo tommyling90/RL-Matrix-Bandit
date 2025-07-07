@@ -1,5 +1,7 @@
 import numpy as np
+
 from agentSpace import AgentSpace
+from learningAlgo import LearningAlgo
 
 class Agent:
     def __init__(self, a_space: AgentSpace, algo):
@@ -26,3 +28,21 @@ class Agent:
         action, exploration = self.learning_algo.getAction()
 
         return action, exploration
+
+    # sérialisation - utilisée lorsqu'on résume les expériences pour ne pas perdre les données dans les itérations précédentes
+    def serialize(self):
+        return {
+            'regret': self.regret,
+            'reward': self.reward,
+            'a_space': self.a_space.serialize(),
+            'learning_algo': self.learning_algo.serialize(),
+        }
+
+    @staticmethod
+    def from_serialized(data):
+        learning_algo = LearningAlgo.from_serialized(data['learning_algo'])
+        a_space = AgentSpace.from_serialized(data['a_space'])
+        agent = Agent(a_space, learning_algo)
+        agent.regret = data['regret']
+        agent.reward = data['reward']
+        return agent
