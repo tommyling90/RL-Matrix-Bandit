@@ -1,0 +1,277 @@
+defaults:
+  horizon: 500
+  player: 2
+  runs: 50
+  save_folder: Figures/Test_Pickle_interrupt_2Players
+  seed: 43
+games:
+  game1:
+    algos:
+    - UCB
+    - UCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+  game10:
+    algos:
+    - UCB
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+  game11:
+    algos:
+    - UCB
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+  game12:
+    algos:
+    - UCB
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+  game13:
+    algos:
+    - TS
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+  game14:
+    algos:
+    - TS
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+  game15:
+    algos:
+    - TS
+    - TS
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+  game2:
+    algos:
+    - UCB
+    - UCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+  game3:
+    algos:
+    - UCB
+    - UCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+  game4:
+    algos:
+    - KLUCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+  game5:
+    algos:
+    - KLUCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+  game6:
+    algos:
+    - KLUCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0
+  game7:
+    algos:
+    - UCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.0
+  game8:
+    algos:
+    - UCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 0.1
+  game9:
+    algos:
+    - UCB
+    - KLUCB
+    matrix:
+    - - 1
+      - 0.2
+      - 0
+    - - 0.2
+      - 0.8
+      - 0.2
+    - - 0
+      - 0.2
+      - 1
+    name: PG_WP
+    noise:
+    - - 0.0
+      - 1.0

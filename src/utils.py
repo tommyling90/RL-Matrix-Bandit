@@ -5,7 +5,7 @@ import re
 import pandas as pd
 from collections import defaultdict
 
-def flatten_metrics(title, player, instance, n_actions, start, metrics_dict):
+def flatten_metrics(title, player, instance, n_actions,metrics_dict):
     row = {
         "title": title,
         "player": player,
@@ -15,7 +15,7 @@ def flatten_metrics(title, player, instance, n_actions, start, metrics_dict):
 
     for key, val in metrics_dict.items():
         for t, value in enumerate(val):
-            row[f"{key}{start+t}"] = value
+            row[f"{key}{t}"] = value
     return row
 
 def sort_metric_columns(df):
@@ -38,15 +38,15 @@ def find_latest_checkpoint(pkl_folder):
     latest_cp = None
     latest_key = (-1, -1, -1)  # (game, run, iter)
 
-    pattern = re.compile(r"cp_game(\d+)_run(\d+)_iter(\d+)\.pkl")
+    pattern = re.compile(r"cp_game(\d+)_run(\d+)\.pkl")
 
     if not os.path.exists(pkl_folder): return None
     for fname in os.listdir(pkl_folder):
         match = pattern.match(fname)
         if match:
-            g, r, i = map(int, match.groups())
-            if (g, r, i) > latest_key:
-                latest_key = (g, r, i)
+            g, r = map(int, match.groups())
+            if (g, r) > latest_key:
+                latest_key = (g, r)
                 latest_cp = fname
 
     if latest_cp:
@@ -62,40 +62,34 @@ def save_pickle_atomic(path, obj):
         pickle.dump(obj, f)
     os.replace(tmp_path, path)
 
-def save_pickle(ctx, horizon, g, r, i, plays, exploration_list, regrets, rewards, title, n_actions, env):
+def save_pickle(ctx, g, r, plays, exploration_list, regrets, rewards, title, n_actions):
     delta = []
-    if i + 1 >= ctx.save_every and ((i + 1) % ctx.save_every == 0 or i == horizon - 1):
-        start = i - (ctx.save_every - 1)
-        end = i + 1
-        for agent_id in range(plays.shape[0]):
-            metrics_dict = {
-                "play_time": plays[agent_id, start:end].tolist(),
-                "reward_time": rewards[agent_id, start:end].tolist(),
-                "regret_time": regrets[agent_id, start:end].tolist(),
-                "exploration_time": exploration_list[agent_id, start:end].tolist(),
-            }
-
-            delta.append(flatten_metrics(
-                title=title,
-                player=f"agent_{agent_id}",
-                instance=f"instance_{r}",
-                n_actions=n_actions,
-                start=start,
-                metrics_dict=metrics_dict
-            ))
-
-        cp = {
-            "game_idx": g,
-            'run_idx': r,
-            'iter_idx': i + 1,
-            'metrics': delta,
-            'rng_state': np.random.get_state(),
-            'env_state': env.serialize()
+    for agent_id in range(plays.shape[0]):
+        metrics_dict = {
+            "play_time": plays[agent_id].tolist(),
+            "reward_time": rewards[agent_id].tolist(),
+            "regret_time": regrets[agent_id].tolist(),
+            "exploration_time": exploration_list[agent_id].tolist(),
         }
-        pkl_file = f"{ctx.cp_file}/pkl/cp_game{g+1}_run{r}_iter{i+1}.pkl"
-        os.makedirs(os.path.dirname(pkl_file), exist_ok=True)
-        save_pickle_atomic(pkl_file, cp)
-        print(f"📝 Saved checkpoint: game={g+1}, run={r}, iter={i + 1}")
+
+        delta.append(flatten_metrics(
+            title=title,
+            player=f"agent_{agent_id}",
+            instance=f"instance_{r}",
+            n_actions=n_actions,
+            metrics_dict=metrics_dict
+        ))
+
+    cp = {
+        "game_idx": g,
+        'run_idx': r+1,
+        'metrics': delta,
+        'rng_state': np.random.get_state(),
+    }
+    pkl_file = f"{ctx.cp_file}/pkl/cp_game{g+1}_run{r}.pkl"
+    os.makedirs(os.path.dirname(pkl_file), exist_ok=True)
+    save_pickle_atomic(pkl_file, cp)
+    print(f"📝 Saved checkpoint: game={g+1}, run={r}")
 
 def aggregate_metrics_from_pkl(path):
     merged_rows = defaultdict(dict)

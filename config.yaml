@@ -1,10 +1,9 @@
 ---
 defaults:
   player: 2
-  runs: 500
-  horizon: 1000
+  runs: 50
+  horizon: 500
   seed: 43
-  save_every: 1000
   save_folder: "Figures/Test_Pickle_interrupt_2Players"
 
 games:

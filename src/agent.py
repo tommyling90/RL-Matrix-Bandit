@@ -29,7 +29,6 @@ class Agent:
 
         return action, exploration
 
-    # sérialisation - utilisée lorsqu'on résume les expériences pour ne pas perdre les données dans les itérations précédentes
     def serialize(self):
         return {
             'regret': self.regret,

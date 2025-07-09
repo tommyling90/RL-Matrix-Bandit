@@ -4,7 +4,6 @@ import sys
 from execute import Execute
 from utils import *
 from pickleContext import PickleContext
-from environment import Environnement
 
 with open("../config.yaml", "r") as f:
     config = yaml.safe_load(f)
@@ -15,7 +14,6 @@ games = config['games']
 runs = defaults['runs']
 horizon = defaults['horizon']
 player = defaults['player']
-save_every = defaults['save_every']
 folder = f"../{defaults['save_folder']}"
 
 def run_results():
@@ -38,7 +36,7 @@ def run_results():
     with open(f"{folder}/config.yaml", 'w') as f:
         yaml.dump(config, f)
 
-    rng_state, env = None, None
+    rng_state = None
 
     pkl_path = f"{folder}/pkl"
     latest_file = find_latest_checkpoint(pkl_path)
@@ -47,15 +45,12 @@ def run_results():
             cp = pickle.load(f)
         game_idx = cp['game_idx']
         run_idx = cp['run_idx']
-        iter_idx = cp['iter_idx']
         rng_state = cp['rng_state']
-        env = Environnement.from_serialized(
-            cp['env_state'])
     else:
-        game_idx = run_idx = iter_idx = 0
+        game_idx = run_idx = 0
 
     np.random.set_state(rng_state) if rng_state is not None else np.random.seed(defaults['seed'])
-    ctx = PickleContext(game_idx, run_idx, iter_idx, save_every, folder)
+    ctx = PickleContext(game_idx, run_idx, folder)
 
     for g in range(game_idx, len(games)):
         game = games[f'game{g+1}']
@@ -64,6 +59,5 @@ def run_results():
         matrices = generate_n_player_diag(player, n_actions, matrix) if is_diagonal(matrix) else generate_n_player(
             player, n_actions, matrix)
         Execute(runs, horizon, player, [None] * player, game['name'], n_actions).get_one_game_result(
-            matrices, game['algos'], ctx, g, 'normal', game['noise'][0], env)
+            matrices, game['algos'], ctx, g, 'normal', game['noise'][0])
         ctx.reset_after_game()
-        env = None

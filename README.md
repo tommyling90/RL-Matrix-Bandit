@@ -66,6 +66,7 @@ The game names available are:
 - PD
 - SG
 - CG_no
+The user should also provide their own defined matrices for these games.
 
 The `noise` parameter should always follow this pattern: `[0.0, {noise_level_tested}]`
 
@@ -75,8 +76,6 @@ Algorithms available are:
 - TS
 
 In `defaults`, the `player` parameter specifies the number of players in the game. Note that this number MUST match the length of the `algos` param in game.
-
-Notice the `save_every` parameter. Since pickle registers the data every `save_every` steps, if you're running a long experiment, is it HIGHLY recommended to enlarge the `save_every` number accordingly. Or else the program would slow down significantly or even crash due to the large amount of files saved when running.
 
 In `save_folder` parameter, the path entered should always be `Figures/YOUR_FOLDER_NAME` without any `../` preceding.
 
@@ -94,12 +93,12 @@ Notice that
 
 ### 📦 Checkpointing
 #### Save Strategy
-- Checkpoints are saved every `save_every` iterations. The `save_every` variable can be found in `runResults.py` and can be modified as the user sees fit.
+- Checkpoints are saved every run (regardless of the number of iterations each run).
 - At each save point, the following are recorded:
-  - `game_idx`, `run_idx`, `iter_idx`
+  - `game_idx`, `run_idx`
   - A list of flattened metric dicts called `delta`. Note that in `delta`, only the metrics of that certain checkpoint are recorded, in order to speed up the execution.
 
-Each checkpoint is saved as a separate `.pkl` file named: `cp_game{g}_run{r}_iter{i+1}.pkl`
+Each checkpoint is saved as a separate `.pkl` file named: `cp_game{g}_run{r}.pkl`
 
 #### 📊 Saving CSV
 

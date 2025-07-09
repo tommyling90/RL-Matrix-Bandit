@@ -4,8 +4,6 @@ from dataclasses import dataclass
 class PickleContext:
     game_idx: int
     run_idx: int
-    iter_idx: int
-    save_every: int
     cp_file: str
 
     def reset_after_run(self):
